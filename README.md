@@ -1,6 +1,6 @@
 # cardholder-app
-How to run ->
-1.Ensure you have Java and Maven installed.
+## How to run 
+1. Ensure you have Java and Maven installed.
 
 2. Navigate to the project's root directory in your terminal.
 
@@ -9,7 +9,7 @@ How to run ->
 4. Access the user interface in your browser at: http://localhost:8080
 
 
-Database Design:
+## Database Design:
 
 The application is built around the table card_details, with id as the primary key.
 The design ensures that the full, unencrypted card number exists only temporarily in memory during processing. For storage, the card number is immediately encrypted using AES and saved to the ENCRYPTED_PAN column. This is the core security measure, preventing exposure of sensitive data even if the database itself is compromised.
