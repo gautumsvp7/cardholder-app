@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cardholder Information Manager</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            padding: 40px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 40px;
+            font-size: 2.5rem;
+            font-weight: 300;
+        }
+
+        .section {
+            margin-bottom: 40px;
+            padding: 30px;
+            border: 1px solid #e1e5e9;
+            border-radius: 8px;
+            background: #f8f9fa;
+        }
+
+        .section h2 {
+            color: #495057;
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+            font-weight: 500;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #495057;
+            font-weight: 500;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #dee2e6;
+            border-radius: 6px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        button:disabled {
+            background: #6c757d;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .message {
+            margin-top: 15px;
+            padding: 12px 16px;
+            border-radius: 6px;
+            font-weight: 500;
+            display: none;
+        }
+
+        .success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        th {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        td {
+            padding: 15px;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        tr:hover {
+            background-color: #f8f9fa;
+        }
+
+        .no-results {
+            text-align: center;
+            color: #6c757d;
+            font-style: italic;
+            padding: 20px;
+        }
+
+        .loading {
+            text-align: center;
+            color: #6c757d;
+            padding: 20px;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+            
+            .section {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Cardholder Information Manager</h1>
+        
+        <!-- Add a New Card Section -->
+        <div class="section">
+            <h2>Add a New Card</h2>
+            <form id="add-card-form">
+                <div class="form-group">
+                    <label for="cardholderName">Cardholder Name:</label>
+                    <input type="text" id="cardholderName" name="cardholderName" required>
+                </div>
+                <div class="form-group">
+                    <label for="pan">Card Number (PAN):</label>
+                    <input type="text" id="pan" name="pan" required>
+                </div>
+                <button type="submit">Add Card</button>
+                <div id="add-message" class="message"></div>
+            </form>
+        </div>
+
+        <!-- Search for a Card Section -->
+        <div class="section">
+            <h2>Search for a Card</h2>
+            <form id="search-form">
+                <div class="form-group">
+                    <label for="last4">Last 4 Digits:</label>
+                    <input type="text" id="last4" name="last4" maxlength="4" required>
+                </div>
+                <button type="submit">Search Cards</button>
+                <div id="search-message" class="message"></div>
+            </form>
+            
+            <table id="results-table">
+                <thead>
+                    <tr>
+                        <th>Cardholder Name</th>
+                        <th>Masked PAN</th>
+                        <th>Created Time</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Results will be populated here -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        // Add card form submission
+        document.getElementById('add-card-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const formData = {
+                cardholderName: document.getElementById('cardholderName').value,
+                pan: document.getElementById('pan').value
+            };
+            
+            const addButton = this.querySelector('button[type="submit"]');
+            const messageDiv = document.getElementById('add-message');
+            
+            // Show loading state
+            addButton.disabled = true;
+            addButton.textContent = 'Adding...';
+            hideMessage('add-message');
+            
+            try {
+                const response = await fetch('/api/cards', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(formData)
+                });
+                
+                if (response.ok) {
+                    showMessage('add-message', 'Card added successfully!', 'success');
+                    this.reset(); // Clear the form
+                } else {
+                    showMessage('add-message', 'Failed to add card. Please try again.', 'error');
+                }
+            } catch (error) {
+                showMessage('add-message', 'Error occurred while adding card.', 'error');
+            } finally {
+                addButton.disabled = false;
+                addButton.textContent = 'Add Card';
+            }
+        });
+
+        // Search form submission
+        document.getElementById('search-form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const last4 = document.getElementById('last4').value;
+            const searchButton = this.querySelector('button[type="submit"]');
+            const messageDiv = document.getElementById('search-message');
+            const resultsTable = document.getElementById('results-table').getElementsByTagName('tbody')[0];
+            
+            // Show loading state
+            searchButton.disabled = true;
+            searchButton.textContent = 'Searching...';
+            hideMessage('search-message');
+            
+            // Clear previous results
+            resultsTable.innerHTML = '<tr><td colspan="3" class="loading">Searching...</td></tr>';
+            
+            try {
+                const response = await fetch(`/api/cards?last4=${encodeURIComponent(last4)}`);
+                
+                if (response.ok) {
+                    const cards = await response.json();
+                    displayResults(cards, resultsTable);
+                } else {
+                    showMessage('search-message', 'Failed to search cards. Please try again.', 'error');
+                    resultsTable.innerHTML = '';
+                }
+            } catch (error) {
+                showMessage('search-message', 'Error occurred while searching cards.', 'error');
+                resultsTable.innerHTML = '';
+            } finally {
+                searchButton.disabled = false;
+                searchButton.textContent = 'Search Cards';
+            }
+        });
+
+        // Display search results
+        function displayResults(cards, resultsTable) {
+            resultsTable.innerHTML = '';
+            
+            if (cards.length === 0) {
+                resultsTable.innerHTML = '<tr><td colspan="3" class="no-results">No cards found with the specified last 4 digits.</td></tr>';
+                return;
+            }
+            
+            cards.forEach(card => {
+                const row = resultsTable.insertRow();
+                row.insertCell(0).textContent = card.cardholderName;
+                row.insertCell(1).textContent = card.maskedPan;
+                row.insertCell(2).textContent = formatDateTime(card.createdAt);
+            });
+        }
+
+        // Format date and time
+        function formatDateTime(dateTimeString) {
+            const date = new Date(dateTimeString);
+            return date.toLocaleString('en-US', {
+                year: 'numeric',
+                month: 'short',
+                day: 'numeric',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit'
+            });
+        }
+
+        // Show message
+        function showMessage(elementId, message, type) {
+            const messageDiv = document.getElementById(elementId);
+            messageDiv.textContent = message;
+            messageDiv.className = `message ${type}`;
+            messageDiv.style.display = 'block';
+        }
+
+        // Hide message
+        function hideMessage(elementId) {
+            const messageDiv = document.getElementById(elementId);
+            messageDiv.style.display = 'none';
+        }
+    </script>
+</body>
+</html>
