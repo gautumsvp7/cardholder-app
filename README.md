@@ -1,4 +1,4 @@
-# cardholder-app
+# Card information app 
 ## How to run 
 1. Ensure you have Java and Maven installed.
 
